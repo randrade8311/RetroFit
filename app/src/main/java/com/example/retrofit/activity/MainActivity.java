@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.retrofit.R;
-import com.example.retrofit.model.Post;
 import com.example.retrofit.model.User;
-import com.example.retrofit.model.UserResponse;
-import com.example.retrofit.rest.PostApiService;
 import com.example.retrofit.rest.UserApiService;
 
 import java.util.List;
@@ -71,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
-
         }
 
         UserApiService userApiService = retrofit.create(UserApiService.class);
