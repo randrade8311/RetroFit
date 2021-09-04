@@ -63,6 +63,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (user != null){
                         Log.i("LoginActivity", user.toString());
                         Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                        i.putExtra("userId", user.getId());
+                        i.putExtra("username", user.getUsername());
                         startActivity(i);
                     } else {
                         invalidIpt.setText("Wrong Credentials");

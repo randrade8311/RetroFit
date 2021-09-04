@@ -1,17 +1,26 @@
 package com.example.retrofit.model;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "posts")
 public class Post {
-    @SerializedName("userId")
-    private int uId;
-
+    @PrimaryKey(autoGenerate = false)
     @SerializedName("id")
     private int id;
 
+    @ColumnInfo(name = "userId")
+    @SerializedName("userId")
+    private int uId;
+
+    @ColumnInfo(name = "title")
     @SerializedName("title")
     private String title;
 
+    @ColumnInfo(name = "body")
     @SerializedName("body")
     private String body;
 
@@ -22,11 +31,11 @@ public class Post {
         this.body = body;
     }
 
-    public int getuId() {
+    public int getUId() {
         return uId;
     }
 
-    public void setuId(int uId) {
+    public void setUId(int uId) {
         this.uId = uId;
     }
 
