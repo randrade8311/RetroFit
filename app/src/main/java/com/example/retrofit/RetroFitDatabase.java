@@ -2,12 +2,18 @@ package com.example.retrofit;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.ViewParent;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.example.retrofit.activity.MainActivity;
+import com.example.retrofit.adapter.PostsAdapter;
 import com.example.retrofit.model.Post;
+import com.example.retrofit.model.PostDao;
 import com.example.retrofit.model.User;
 import com.example.retrofit.model.UserDao;
 import com.example.retrofit.rest.PostApiService;
@@ -20,10 +26,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-@Database(entities = {User.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class, Post.class}, version = 2, exportSchema = false)
 public abstract class RetroFitDatabase extends RoomDatabase {
-    private static RetroFitDatabase sInstance;
+    private static RetroFitDatabase sInstance = null;
     public abstract UserDao user();
+    public abstract PostDao post();
     public static final String BASE_URL = "https://jsonplaceholder.typicode.com/";
     private static Retrofit retrofit = null;
     private List<Post> posts;
@@ -34,7 +41,7 @@ public abstract class RetroFitDatabase extends RoomDatabase {
             sInstance = Room
                     .databaseBuilder(context.getApplicationContext(),
                             RetroFitDatabase.class,
-                            "users.db")
+                            "user.db")
                     .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
                     .build();
@@ -45,35 +52,10 @@ public abstract class RetroFitDatabase extends RoomDatabase {
     public void populateUsers() {
         if (user().count() == 0){
             for (int i = 0; i < users.size(); i++) {
+                users.get(i).setPassword("password" + i);
                 user().addUser(users.get(i));
             }
         }
-    }
-
-    public void getPostsAPIData() {
-        if (retrofit == null) {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-        }
-
-        PostApiService postApiService = retrofit.create(PostApiService.class);
-        Call<List<Post>> call = postApiService.getPosts();
-        call.enqueue(new retrofit2.Callback<List<Post>>() {
-            @Override
-            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-                posts = response.body();
-                Log.i("RetroFitDatabase", "Num of posts: " + posts);
-            }
-
-            @Override
-            public void onFailure(Call<List<Post>> call, Throwable t) {
-                Log.e("RetroFitDatabase", "Error: " + t.toString());
-            }
-        });
-
-
     }
 
     public void getUsersAPIData() {
@@ -90,7 +72,7 @@ public abstract class RetroFitDatabase extends RoomDatabase {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 users = response.body();
-                Log.i("RetroFitDatabase", "Num of users: " + users.size());
+//                Log.i("RetroFitDatabase", "Num of users: " + users.get(0).getUsername() + " " + users.get(0).getPassword());
                 populateUsers();
             }
 
